@@ -47,7 +47,7 @@ function mymag_assets() {
     wp_enqueue_style( "animate-css", get_theme_file_uri( "/assets/css/animate.min.css" ), null, "1.0" );
     wp_enqueue_style( "owl-css", get_theme_file_uri( "/assets/css/owl.carousel.css" ), null, "1.0" );
     wp_enqueue_style( "jquery-css", get_theme_file_uri( "/assets/css/jquery-ui.css" ), null, "1.0" );
-    wp_enqueue_style( "main-css", get_theme_file_uri( "/assets/css/main.css" ), null, "1.0" );
+    wp_enqueue_style( "main-css", get_theme_file_uri( "/assets/css/main.css" ), null, time() );
     wp_enqueue_style( "mymag-css", get_stylesheet_uri(), null,time());
 
 
@@ -154,3 +154,49 @@ FORM;
 return $newform;
 }
 add_filter("get_search_form","mymag_search_form");
+
+function mymag_comment_form($fields){
+	$comment_fields = $fields ['comment'];
+	unset($fields['comment']);
+	$fields['comment'] = $comment_fields;
+	$cookies_fields = $fields ['cookies'];
+	unset($fields['cookies']);
+	$fields['cookies'] = $cookies_fields;
+	return $fields;
+}
+add_filter('comment_form_fields','mymag_comment_form');
+
+function custom_comments_markup($comment, $args, $depth) {
+	$GLOBALS['comment'] = $comment;
+	$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';  // <div> অথবা <li> টাইপ চেক
+
+	// depth অনুযায়ী left-padding ক্লাস যোগ
+	$left_padding_class = ($depth > 1) ? 'left-padding' : '';  // যদি depth 1 এর বেশি হয়, তাহলে left-padding ক্লাস যোগ হবে
+
+	?>
+    <<?php echo $tag; ?> <?php comment_class(empty( $args['has_children'] ) ? '' : 'parent'); ?> id="comment-<?php comment_ID(); ?>" class="<?php echo $left_padding_class; ?>">
+    <div class="single-comment justify-content-between d-flex">
+        <div class="user justify-content-between d-flex">
+            <div class="thumb">
+				<?php echo get_avatar( $comment, 'mymag-test-small' ); ?>  <!-- কমেন্টারের অ্যাভাটার -->
+            </div>
+            <div class="desc">
+                <h5><a href="<?php comment_author_url(); ?>"><?php comment_author(); ?></a></h5>
+                <p class="date">
+					<?php printf( esc_html__( '%1$s at %2$s', 'your-textdomain' ), get_comment_date(), get_comment_time() ); ?>
+                </p>
+                <p class="comment">
+					<?php comment_text(); ?>  <!-- কমেন্ট টেক্সট -->
+                </p>
+            </div>
+        </div>
+        <div class="reply-btn">
+			<?php comment_reply_link( array_merge( $args, array( 'reply_text' => 'Reply', 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+        </div>
+    </div>
+    </<?php echo $tag; ?>>
+	<?php
+}
+
+
+

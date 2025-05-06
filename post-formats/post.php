@@ -75,12 +75,11 @@ get_header();
                                                 class="lnr lnr-arrow-right"></span></a>
 								<?php endif;?>
                             </div>
-                        </div>
-						<?php
-						if (!post_password_required()){
-							comments_template();
-						}
-						?>
+	                        <?php
+	                        if (!post_password_required()){
+		                        comments_template();
+	                        }
+	                        ?>
                     </div>
                     <!-- End single-post Area -->
                 </div>

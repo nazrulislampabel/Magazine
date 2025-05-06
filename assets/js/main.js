@@ -476,4 +476,5 @@
         $("#thumbnail_container").hide();
         player.playVideo();
     });
+
 })(jQuery)
